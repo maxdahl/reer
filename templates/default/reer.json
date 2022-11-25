@@ -1,0 +1,9 @@
+{
+  "locations": {
+    "userConfig": "config/user.json",
+    "cookies": "config/.cookies",
+    "history": "config/.history",
+    "routes": "routes"
+  },
+  "baseUrl": ""
+}
