@@ -5,11 +5,11 @@
 !*.env.example
 
 # compiled output
-*/dist
-*/tmp
-*/out-tsc
-*/build
-*/lib
+dist
+tmp
+out-tsc
+build
+lib
 
 # Log files
 *npm-debug.log*
