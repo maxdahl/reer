@@ -9,6 +9,7 @@
 */tmp
 */out-tsc
 */build
+*/lib
 
 # Log files
 *npm-debug.log*

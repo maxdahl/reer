@@ -1,5 +1,5 @@
 {
-  "name": "reer",
+  "name": "@maxdahl/reer",
   "version": "1.0.0",
   "description": "A simple cli tool to provide easy api route testing",
   "main": "./lib/reer.js",
@@ -16,7 +16,7 @@
     "build": "tsc && tsc-alias",
     "start": "npm run build && node bin/index.js",
     "dev": "nodemon -e ts --exec \"npm run start\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\"",
     "lint": "eslint src/*",
     "fix": "prettier --write src/* && eslint src/* --fix",
     "prepare": "npm run build",
@@ -31,8 +31,12 @@
     "request",
     "web",
     "postman",
-    "backend"
+    "backend",
+    "cli"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/maxdahl/reer.git"
