@@ -1,6 +1,6 @@
 {
   "name": "@maxdahl/reer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple cli tool to provide easy api route testing",
   "main": "./lib/reer.js",
   "files": [
