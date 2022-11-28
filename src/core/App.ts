@@ -36,14 +36,6 @@ export class App implements IApp {
     // );
 
     program.parse();
-
-    if (program.args[0]?.trim() === "init") {
-      this.initProject();
-    } else {
-      this.loadAppConfig();
-      this.loadUserConfig();
-      this.run();
-    }
   }
 
   private initProject() {
@@ -123,10 +115,17 @@ export class App implements IApp {
 
   run() {
     if (program.args && program.args.length > 0) {
-      program.args.forEach(async (cmd) => {
-        const output = await this.runCmd(cmd);
-        ui.print(output);
-      });
+      if (program.args[0]?.trim() === "init") {
+        this.initProject();
+      } else {
+        this.loadAppConfig();
+        this.loadUserConfig();
+
+        program.args.forEach(async (cmd) => {
+          const output = await this.runCmd(cmd);
+          ui.print(output);
+        });
+      }
     } else {
       this.listen();
     }

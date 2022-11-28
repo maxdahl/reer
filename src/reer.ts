@@ -5,4 +5,4 @@ import { RequestManager } from "core/RequestManager";
 const reer = new Reer(RequestManager.getInstance());
 const app = new App(reer);
 
-// app.run();
+export { reer, app };

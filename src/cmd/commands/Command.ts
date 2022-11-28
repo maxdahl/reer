@@ -3,7 +3,7 @@ import { CmdResult } from "core/types";
 export abstract class Command {
   constructor(protected readonly cmdArguments: string[][]) {}
 
-  protected checkArguments(args: string[]) {
+  protected checkArguments() {
     this.cmdArguments.forEach((args, index) => {
       if (!args.includes(args[index]))
         throw new TypeError(

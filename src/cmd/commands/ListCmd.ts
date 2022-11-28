@@ -1,22 +1,16 @@
 import { CmdManager } from "cmd/CmdManager";
+import { ICommand } from "cmd/interfaces";
 import { IReer } from "core/interfaces";
-import { Command } from "./Command";
 
-export class ListCmd extends Command {
-  constructor(private reerInstance: IReer, private cmdManager: CmdManager) {
-    const args = [["req", "requests", "res", "responses"]];
-
-    super(args);
-  }
+export class ListCmd implements ICommand {
+  constructor(private reerInstance: IReer, private cmdManager: CmdManager) {}
 
   execute(args: string[]) {
-    this.checkArguments(args);
-
     if (["requests", "req"].includes(args[0])) {
       const reqList = this.reerInstance.getRequestManager().getRequests();
       const output = [];
 
-      reqList.forEach((req, index) => {
+      reqList.forEach((req) => {
         const reqOutput = [
           `${req.route.method.toUpperCase()} ${req.route.url}`,
           `${req.status}`,
