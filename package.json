@@ -19,10 +19,8 @@
     "test": "echo \"Error: no test specified\"",
     "lint": "eslint src/*",
     "fix": "prettier --write src/* && eslint src/* --fix",
-    "prepare": "npm run build",
+    "prepare": "husky install",
     "prepublishOnly": "npm run test && npm run lint",
-    "preversion": "echo \"PRE VERSION\"",
-    "version": "npm run fix",
     "postversion": "git push && git push --tags"
   },
   "keywords": [
@@ -51,6 +49,7 @@
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.2",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "tsc-alias": "^1.7.1",
