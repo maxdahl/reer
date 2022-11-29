@@ -59,25 +59,25 @@ export class App implements IApp {
   private loadAppConfig() {
     const opts = program.opts();
 
-    const fullReerPath = path.join(opts.path, opts.directory);
-    if (!fileUtil.exists(fullReerPath)) {
+    const reerDir = path.join(opts.path, opts.directory);
+    if (!fileUtil.exists(reerDir)) {
       return;
     }
 
-    const configFile = path.join(fullReerPath, opts.config);
+    const configFile = path.join(reerDir, opts.config);
 
     const appConfig = {
       locations: {
-        userConfig: "config/user.json",
-        cookies: "config/.cookies",
-        history: "config/.history",
+        userConfig: "config/project.json",
+        cookies: "store/.cookies",
+        history: "store/.history",
         routes: "routes",
       },
 
       baseUrl: "",
       ...fileUtil.parseJson(configFile),
 
-      projectPath: fullReerPath,
+      reerDir,
       configFile: configFile,
       configFileName: opts.config,
     };
@@ -85,20 +85,20 @@ export class App implements IApp {
     Config.set("app", appConfig);
   }
 
-  private loadUserConfig() {
+  private loadProjectConfig() {
     const configFile = path.join(
-      Config.get("app.projectPath"),
-      Config.get("app.locations.userConfig")
+      Config.get("app.reerDir"),
+      Config.get("app.locations.projectConfig")
     );
 
-    Config.set("user", fileUtil.parseJson(configFile));
+    Config.set("project", fileUtil.parseJson(configFile));
   }
 
-  private writeUserConfig() {
-    const config = Config.get("user");
+  private writeProjectConfig() {
+    const config = Config.get("project");
     const configFile = path.join(
-      Config.get("app.projectPath"),
-      Config.get("app.locations.userConfig")
+      Config.get("app.reerDir"),
+      Config.get("app.locations.projectConfig")
     );
 
     fileUtil.writeObject(configFile, config);
@@ -118,7 +118,7 @@ export class App implements IApp {
       return this.initProject();
     } else {
       this.loadAppConfig();
-      this.loadUserConfig();
+      this.loadProjectConfig();
     }
 
     if (program.args.length > 0) {

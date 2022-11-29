@@ -31,7 +31,10 @@ export class Reer implements IReer {
     do {
       match = varRegex.exec(resolved);
       if (match)
-        resolved = resolved.replace(match[0], Config.get(`user.${match[1]}`));
+        resolved = resolved.replace(
+          match[0],
+          Config.get(`project.${match[1]}`)
+        );
     } while (match);
 
     return resolved;
@@ -61,7 +64,7 @@ export class Reer implements IReer {
 
   private parseRoutingFile(filename: string) {
     const routesDir = path.join(
-      Config.get("app.projectPath"),
+      Config.get("app.reerDir"),
       Config.get("app.locations.routes")
     );
     const routeFile = path.join(routesDir, filename);

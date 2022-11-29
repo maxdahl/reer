@@ -1,8 +1,8 @@
 {
   "locations": {
-    "userConfig": "config/user.json",
-    "cookies": "config/.cookies",
-    "history": "config/.history",
+    "projectConfig": "config/project.json",
+    "cookies": "store/.cookies",
+    "history": "store/.history",
     "routes": "routes"
   },
   "baseUrl": ""
