@@ -23,23 +23,6 @@ export class Reer implements IReer {
     }
   }
 
-  resolveConfigVariables(search: string) {
-    const varRegex = /{{([a-zA-Z.]+[a-zA-Z0-9-_.]*)}}/gm;
-    let resolved = search;
-
-    let match: RegExpExecArray | null;
-    do {
-      match = varRegex.exec(resolved);
-      if (match)
-        resolved = resolved.replace(
-          match[0],
-          Config.get(`project.${match[1]}`)
-        );
-    } while (match);
-
-    return resolved;
-  }
-
   /**
    * Parse an object and resolve config items
    **/
@@ -47,15 +30,17 @@ export class Reer implements IReer {
     const resolved = {};
     Object.keys(object).forEach((key) => {
       if (typeof object[key] === "string") {
-        resolved[key] = this.resolveConfigVariables(object[key]);
+        resolved[key] = Config.resolveVariables(object[key]);
       } else if (typeof object[key] === "object") {
         if (Array.isArray(object[key])) {
           resolved[key] = object[key].map((val: string) =>
-            this.resolveConfigVariables(val)
+            Config.resolveVariables(val)
           );
         } else {
           resolved[key] = this.resolveRouteConfig(object[key]);
         }
+      } else {
+        resolved[key] = object[key];
       }
     });
 
@@ -89,7 +74,6 @@ export class Reer implements IReer {
       routeConfig = this.resolveRouteConfig(route);
     }
 
-    console.log(routeConfig);
     if (!routeConfig.name) routeConfig.name = route.name;
 
     if (routeConfig.before) {

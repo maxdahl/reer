@@ -14,7 +14,7 @@ export class ListCmd implements ICommand {
         const reqOutput = [
           `${req.route.method.toUpperCase()} ${req.route.url}`,
           `${req.status}`,
-          req.request.getHeaders(),
+          req.request.headers,
           req.route.data,
         ];
 

@@ -3,7 +3,7 @@ import { ResponseHeaders } from "./types";
 
 export interface ICookie {
   name: string;
-  value: string;
+  value?: string;
   domain?: string;
   path?: string;
   expires?: Date;
@@ -27,13 +27,18 @@ export interface IHttpResponse {
 }
 
 export interface IHttpRequest {
+  readonly method: string;
+  readonly url: string;
+  readonly type: string;
+  readonly headers: Record<string, string>;
+  readonly cookies: Record<string, ICookie>;
+  readonly data: any;
+
   setHeader: (name: string, value: string) => void;
   getHeader: (name: string) => string;
-  getHeaders: () => Record<string, string>;
 
   setCookie: (name: string, value: string) => void;
   getCookie: (name: string) => ICookie;
-  getCookies: () => Record<string, ICookie>;
 
   execute: () => Promise<IHttpResponse>;
 }

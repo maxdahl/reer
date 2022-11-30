@@ -1,95 +1,114 @@
-import { objectToString } from "../utils/formatting";
+import { objectToHighlightedString } from "../utils/formatting";
 import axios from "../utils/axios";
 import { ContentTypes } from "./contentTypes";
 import { Cookie } from "./Cookie";
 import { HttpCookieManager } from "./CookieManager";
 import { HttpResponse } from "./Response";
 import { RequestConfig } from "./types";
+import { ICookie } from "./interfaces";
 
 export class HttpRequest {
-  private method: string;
-  private url: string;
-  private type: string;
-  private headers: Record<string, string>;
-  private cookies: Record<string, Cookie>;
-  private data: any;
+  private _method: string;
+  private _url: string;
+  private _type: string;
+  private _headers: Record<string, string>;
+  private _cookies: Record<string, ICookie>;
+  private _data: any;
 
   constructor(requestConfig: RequestConfig) {
-    this.method = requestConfig.method?.toUpperCase() || "GET";
-    this.url = requestConfig.url;
-    this.type = requestConfig.type || ContentTypes.JSON;
-    this.headers = requestConfig.headers || {};
-    this.data = requestConfig.data;
+    this._method = requestConfig.method?.toUpperCase() || "GET";
+    this._url = requestConfig.url;
+    this._type = requestConfig.type || ContentTypes.JSON;
+    this._headers = requestConfig.headers || {};
+    this._data = requestConfig.data;
 
-    if (!this.url.startsWith("http")) this.url = `http://${this.url}`;
+    if (!this._url.startsWith("http")) this._url = `http://${this._url}`;
 
     if (requestConfig.cookies) {
       Object.entries(requestConfig.cookies).forEach(([name, value]) => {
         const cookie = new Cookie(name, value);
-        this.cookies[name] = cookie;
+        this._cookies[name] = cookie;
       });
     }
 
-    this.cookies = {
+    this._cookies = {
       ...HttpCookieManager.getCookies(),
-      ...this.cookies,
+      ...this._cookies,
     };
 
     this.setContentTypeHeader();
   }
 
+  get method() {
+    return this._method;
+  }
+
+  get url() {
+    return this._url;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+  get headers() {
+    return this._headers;
+  }
+
+  get cookies() {
+    return this._cookies;
+  }
+
+  get data() {
+    return this._data;
+  }
+
+  setHeader(name: string, value: string) {
+    this._headers[name] = value;
+  }
+
+  getHeader(name: string) {
+    return this._headers[name];
+  }
+
+  setCookie(name: string, value: string) {
+    this._cookies[name] = new Cookie(name, value);
+  }
+
+  getCookie(name: string) {
+    return this._cookies[name];
+  }
+
   private setContentTypeHeader() {
-    if (this.method === "GET") {
-      delete this.headers["Content-Type"];
-    } else if (this.type) {
-      if (this.type.includes("/")) this.headers["Content-Type"] = this.type;
-      else if (ContentTypes[this.type.toUpperCase()]) {
-        this.headers["Content-Type"] = ContentTypes[this.type.toUpperCase()];
-      } else throw new TypeError(`Invalid Content-Type ${this.type}`);
+    if (this._method === "GET") {
+      delete this._headers["Content-Type"];
+    } else if (this._type) {
+      if (this._type.includes("/")) this._headers["Content-Type"] = this._type;
+      else if (ContentTypes[this._type.toUpperCase()]) {
+        this._headers["Content-Type"] = ContentTypes[this._type.toUpperCase()];
+      } else throw new TypeError(`Invalid Content-Type ${this._type}`);
     }
   }
 
   private cookiesToHeaders() {
     let cookieStr = "";
-    Object.values(this.cookies).forEach((cookie) => {
+    Object.values(this._cookies).forEach((cookie) => {
       cookieStr += cookie.toString() + ";";
     });
 
-    this.headers["Cookie"] = cookieStr;
-  }
-
-  setHeader(name: string, value: string) {
-    this.headers[name] = value;
-  }
-
-  getHeader(name: string) {
-    return this.headers[name];
-  }
-
-  getHeaders() {
-    return this.headers;
-  }
-
-  setCookie(name: string, value: string) {
-    this.cookies[name] = new Cookie(name, value);
-  }
-
-  getCookie(name: string) {
-    return this.cookies[name];
-  }
-
-  getCookies() {
-    return this.cookies;
+    return cookieStr;
+    // this._headers["Cookie"] = cookieStr;
   }
 
   async execute() {
-    this.cookiesToHeaders();
-
     const res = await axios.request({
-      method: this.method,
-      url: this.url,
-      headers: this.headers,
-      data: JSON.stringify(this.data),
+      method: this._method,
+      url: this._url,
+      headers: {
+        Cookie: this.cookiesToHeaders(),
+        ...this._headers,
+      },
+      data: JSON.stringify(this._data),
     });
 
     return new HttpResponse(this, res);
@@ -99,11 +118,11 @@ export class HttpRequest {
     const seperator = "\r\n";
 
     let resString = "";
-    resString += `${this.method} ${this.url}\r\n`;
+    resString += `${this._method} ${this._url}\r\n`;
     resString += seperator;
-    resString += objectToString(this.headers) + "\r\n";
+    resString += objectToHighlightedString(this._headers) + "\r\n";
     resString += seperator;
-    resString += objectToString(this.data);
+    resString += objectToHighlightedString(this._data);
 
     return resString;
   }

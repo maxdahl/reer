@@ -1,14 +1,6 @@
 import { IHttpRequest, IHttpResponse } from "http/interfaces";
 import { RequestConfig } from "http/types";
 
-export type CmdResult =
-  | string
-  | number
-  | Array<CmdResult>
-  | {
-      toString: () => string;
-    };
-
 export type RequestCollection = {
   status: string;
   route: RouteConfig;
@@ -23,6 +15,7 @@ export type RouteConfig = RequestConfig & {
   name?: string;
   before?: string | string[];
   after?: string | string[];
+  ignoreBaseUrl?: boolean;
 };
 
 export interface AppArgument {

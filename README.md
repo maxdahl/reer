@@ -110,7 +110,8 @@ A full route definition looks like this:
       "set variable value",
       "set variable 2 \"Some other value\""
     ],
-    "after": "set token res.body.token"
+    "after": "set token res.body.token",
+    "ignoreBaseUrl": false
   },
 }
 ```
@@ -152,6 +153,9 @@ The format has to match the provided type property. If you for example specify t
 Actions to run before/after the request is made. You can use all available commands or run additional requests (either with get/post/put/delete command or specify the file/request name like auth/login).
 You can provide an array to execute multiple commands/requests
 
+###### ignoreBaseUrl
+If set to true, this particular route will ignore the baseUrl setting in the main project config
+
 #### Project Configuration
 The project configuration is used for storing project wide variables. You can access them anywhere in your project except the main reer config file (because it needs to be parsed in order to find the project config file)
 Variables are stored as a json object and can be nested indefinitely.
@@ -184,7 +188,7 @@ To read nested variables seperate them with a dot ```{{NESTED.VALUE}}```
 }
 ```
 
-Now {{crednetials.username}} and {{credentials.password}} will be resolved to "myusername" and "mypassword". 
+Now {{credentials.username}} and {{credentials.password}} will be resolved to "myusername" and "mypassword". 
 Also the {{host}} variable will be resolved to "http://localhost". We could also specify the baseUrl config param in the main reer config file (reer.json) and only provide "login" as url
 
 ### Commands

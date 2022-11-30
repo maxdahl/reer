@@ -2,13 +2,17 @@ import { program } from "commander";
 import * as path from "path";
 import * as fs from "fs";
 import * as prompt from "prompt-sync";
-import * as promptHistory from "prompt-sync-history";
+import { promptHistory } from "utils/promptHistory";
 
+import axios from "utils/axios";
 import { IApp } from "./interfaces";
 import { IReer } from "./interfaces";
 import { Config } from "./Config";
-import * as ui from "ui/print";
+import * as ui from "ui/";
 import * as fileUtil from "utils/file";
+import { HttpCookieManager } from "http/CookieManager";
+import { ICookie } from "http/interfaces";
+import { Cookie } from "http/Cookie";
 
 export class App implements IApp {
   constructor(private reer: IReer) {
@@ -36,6 +40,35 @@ export class App implements IApp {
     // );
 
     program.parse();
+  }
+
+  /*
+   * Get the full path of a location inside reerDir
+   */
+  private getFullPath(location: string) {
+    const reerDir = Config.get("app.reerDir");
+    return path.join(reerDir, location);
+  }
+
+  private loadCookies() {
+    const cookieFile = Config.get("app.locations.cookies");
+    const rawCookies = fileUtil.parseJson(
+      this.getFullPath(cookieFile)
+    ) as Record<string, ICookie>;
+    const cookies = {};
+
+    Object.values(rawCookies).forEach((cookie) => {
+      cookies[cookie.name] = new Cookie(cookie);
+    });
+
+    HttpCookieManager.setCookies(cookies);
+  }
+
+  private saveCookies() {
+    const cookies = HttpCookieManager.getCookies();
+    const cookieFile = Config.get("app.locations.cookies");
+
+    fileUtil.writeObject(this.getFullPath(cookieFile), cookies);
   }
 
   private initProject() {
@@ -82,14 +115,13 @@ export class App implements IApp {
       configFileName: opts.config,
     };
 
+    axios.defaults.baseURL = appConfig.baseUrl;
     Config.set("app", appConfig);
   }
 
   private loadProjectConfig() {
-    const configFile = path.join(
-      Config.get("app.reerDir"),
-      Config.get("app.locations.projectConfig")
-    );
+    const projectConfigFile = Config.get("app.locations.projectConfig");
+    const configFile = path.join(this.getFullPath(projectConfigFile));
 
     Config.set("project", fileUtil.parseJson(configFile));
   }
@@ -119,6 +151,7 @@ export class App implements IApp {
     } else {
       this.loadAppConfig();
       this.loadProjectConfig();
+      this.loadCookies();
     }
 
     if (program.args.length > 0) {
@@ -132,8 +165,11 @@ export class App implements IApp {
   }
 
   async listen() {
+    const historyFile = Config.get("app.locations.history");
+    const history = promptHistory(this.getFullPath(historyFile));
+
     const prmpt = prompt({
-      history: promptHistory(),
+      history,
     });
 
     let run = true;
@@ -146,7 +182,8 @@ export class App implements IApp {
       }
     }
 
+    history.save();
     // this.writeUserConfig();
-    // this.writeCookies();
+    this.saveCookies();
   }
 }

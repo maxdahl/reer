@@ -1,5 +1,5 @@
-import { CmdResult } from "core/types";
+import { Printable } from "ui/types";
 
 export interface ICommand {
-  execute: (args: string[], cmd: string) => CmdResult;
+  execute: (args: string[], cmd: string) => Printable;
 }

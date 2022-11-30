@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import highlight from "cli-highlight";
-import { objectToString } from "../utils/formatting";
+import { objectToHighlightedString } from "../utils/formatting";
 import { Cookie } from "./Cookie";
 import { HttpCookieManager } from "./CookieManager";
 import { IHttpRequest, IHttpResponse, ICookie } from "./interfaces";
@@ -51,7 +51,7 @@ export class HttpResponse implements IHttpResponse {
 
     switch (contentType.toLowerCase()) {
       case "application/json":
-        return objectToString(JSON.parse(this.data));
+        return objectToHighlightedString(JSON.parse(this.data));
     }
 
     return <string>this.data;
@@ -63,7 +63,7 @@ export class HttpResponse implements IHttpResponse {
     let resString = "";
     resString += `${this.status} ${this.statusText}\r\n`;
     resString += seperator;
-    resString += objectToString(this.headers) + "\r\n";
+    resString += objectToHighlightedString(this.headers) + "\r\n";
     resString += seperator;
     resString += this.getDataString();
 

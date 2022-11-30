@@ -2,6 +2,23 @@ export class Config {
   private constructor() {}
   private static items = {};
 
+  static resolveVariables(search: string) {
+    const varRegex = /{{([a-zA-Z.]+[a-zA-Z0-9-_.]*)}}/gm;
+    let resolved = search;
+
+    let match: RegExpExecArray | null;
+    do {
+      match = varRegex.exec(resolved);
+      if (match)
+        resolved = resolved.replace(
+          match[0],
+          Config.get(`project.${match[1]}`)
+        );
+    } while (match);
+
+    return resolved;
+  }
+
   static get(name: string, defaultValue = undefined) {
     const nestedItems = name.split(".");
     let currentItem = Config.items;

@@ -1,18 +1,19 @@
 import * as fs from "fs";
 import * as path from "path";
-import { objectToString } from "./formatting";
 
 export function parseJson(filename: string) {
   let config = {};
   if (fs.existsSync(filename)) {
-    config = JSON.parse(fs.readFileSync(filename).toString());
+    try {
+      config = JSON.parse(fs.readFileSync(filename).toString());
+    } catch (err) {}
   }
 
   return config;
 }
 
 export function writeObject(file: string, obj: Record<any, any>) {
-  fs.writeFileSync(path.join(file), objectToString(obj));
+  fs.writeFileSync(path.join(file), JSON.stringify(obj));
 }
 
 export function exists(path: string | string[]) {

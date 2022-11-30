@@ -1,15 +1,31 @@
 import { ICookie } from "./interfaces";
 
 export class Cookie implements ICookie {
+  public name: string;
+
   constructor(
-    public name: string,
-    public value: string,
+    cookie: string | ICookie,
+    public value?: string,
     public domain?: string,
     public path?: string,
     public expires?: Date,
     public httpOnly?: boolean,
     public secure?: boolean
-  ) {}
+  ) {
+    if (typeof cookie === "object") {
+      this.name = cookie.name;
+      this.value = cookie.value;
+      this.domain = cookie.domain;
+      this.path = cookie.path;
+      this.expires = cookie.expires;
+      this.httpOnly = cookie.httpOnly;
+      this.secure = cookie.secure;
+    } else {
+      this.name = cookie;
+    }
+
+    if (!this.value) throw new Error(`Cookie with name ${cookie} has no value`);
+  }
 
   toString() {
     const { name, value, domain, path, expires, httpOnly, secure } = this;
