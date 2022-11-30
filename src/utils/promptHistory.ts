@@ -13,7 +13,6 @@ export function promptHistory(file: string = undefined, max = 1000) {
     } catch (e) {}
 
     HIST = HIST.slice(HIST.length - max, HIST.length);
-    console.log("LOAD", HIST);
   }
   let ix = HIST.length;
 
@@ -34,7 +33,6 @@ export function promptHistory(file: string = undefined, max = 1000) {
       return HIST[--ix];
     },
     next: function () {
-      console.log("next", HIST[ix + 1]);
       return HIST[++ix];
     },
     reset: function () {

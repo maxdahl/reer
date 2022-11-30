@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const version = require("../../package.json").version;
+
 import { program } from "commander";
 import * as path from "path";
 import * as fs from "fs";
@@ -17,7 +20,10 @@ import { Cookie } from "http/Cookie";
 export class App implements IApp {
   constructor(private reer: IReer) {
     program
-      .argument("[string]", "route to test")
+      .description("A cli api testing tool written in typescript")
+      .version(version)
+      .argument("[routes]", "route to test")
+      .argument("[commands]", "commands to execute")
       .option(
         "-p, --path <string>",
         "The working directory of your project",
